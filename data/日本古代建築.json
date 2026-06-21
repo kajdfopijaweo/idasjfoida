@@ -70,8 +70,9 @@
   {
     "id": "賀茂別雷（かもわけいかづち）神社本殿・権殿",
     "questionTitle": "これは何？",
-    "image": ".jpg",
-    "materialLink": "日本古代建築史",
+    "category": "日本古代建築",
+    "image": "images/賀茂別雷（かもわけいかづち）神社本殿・権殿.jpg",
+    "materialLink": "奈良時代建築",
     "questionType": "photo-to-answer",
     "answerItems": [
       {
@@ -80,11 +81,7 @@
       },
       {
         "label": "造り",
-        "value": "神社建築の流造りです。"
-      },
-      {
-        "label": "特徴",
-        "value": "切妻屋根の平入とし、前面の屋根を延長して向拝が設けられています。"
+        "value": "神社建築の神明(しんめい)造りです。"
       }
     ]
   }
