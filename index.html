@@ -22,7 +22,7 @@
     <div id="answerLabels"></div>
 
     <button>資料</button>
-    <button>表示</button>
+    <button onclick="toggleAnswerValues()">表示</button>
     <button>前へ</button>
     <button>次へ</button>
   </section>
@@ -41,6 +41,8 @@
 
   <script>
     let questions = [];
+    let currentQuestion = null;
+    let isAnswerVisible = false;
 
     async function loadQuestions() {
       if (questions.length > 0) return;
@@ -54,15 +56,31 @@
 
       const question = questions.find(item => item.id === "伊勢神宮内宮正殿");
       if (!question) return;
+      
+      currentQuestion = question;
+      isAnswerVisible = false;
 
       document.getElementById("questionTitle").textContent = question.questionTitle;
       document.getElementById("questionImage").src = question.image;
 
-      const labelsHtml = question.answerItems
-        .map(item => `<p>${item.label}</p>`)
+      renderAnswerItems();
+    }
+    function renderAnswerItems() {
+      if (!currentQuestion) return;
+
+      const labelsHtml = currentQuestion.answerItems
+        .map(item => {
+          const valueText = isAnswerVisible ? item.value : "";
+          return `<p>${item.label}：${valueText}</p>`;
+        })
         .join("");
 
       document.getElementById("answerLabels").innerHTML = labelsHtml;
+    }
+    
+    function toggleAnswerValues() {
+      isAnswerVisible = !isAnswerVisible;
+      renderAnswerItems();
     }
 
     function showPage(pageId) {
