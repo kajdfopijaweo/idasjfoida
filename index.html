@@ -32,6 +32,7 @@
     let questions = [];
     let currentQuestionIndex = 0;
     let isAnswerVisible = false;
+    const questionCache = new Map();
 
     async function loadCategories() {
       const response = await fetch("category.json");
