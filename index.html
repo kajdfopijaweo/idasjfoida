@@ -24,7 +24,7 @@
     <button>資料</button>
     <button onclick="toggleAnswerValues()">表示</button>
     <button>前へ</button>
-    <button>次へ</button>
+    <button onclick="showNextQuestion()">次へ</button>
   </section>
 
   <section id="p4" hidden>
@@ -42,6 +42,7 @@
   <script>
     let questions = [];
     let currentQuestion = null;
+    let currentQuestionIndex = 0;
     let isAnswerVisible = false;
 
     async function loadQuestions() {
@@ -55,9 +56,11 @@
       await loadQuestions();
 
       const question = questions.find(item => item.id === questionId);
-      if (!question) return;
-      
-      currentQuestion = question;
+      const questionIndex = questions.findIndex(item => item.id === questionId);
+      if (questionIndex === -1) return;
+
+      currentQuestionIndex = questionIndex;
+      const question = questions[currentQuestionIndex];
       isAnswerVisible = false;
 
       document.getElementById("questionTitle").textContent = question.questionTitle;
@@ -81,6 +84,24 @@
     
     function toggleAnswerValues() {
       isAnswerVisible = !isAnswerVisible;
+      renderAnswerItems();
+    }
+
+    function showNextQuestion() {
+      if (questions.length === 0) return;
+
+      currentQuestionIndex = currentQuestionIndex + 1;
+
+      if (currentQuestionIndex >= questions.length) {
+        currentQuestionIndex = 0;
+      }
+
+      currentQuestion = questions[currentQuestionIndex];
+      isAnswerVisible = false;
+
+      document.getElementById("questionTitle").textContent = currentQuestion.questionTitle;
+      document.getElementById("questionImage").src = currentQuestion.image;
+
       renderAnswerItems();
     }
 
