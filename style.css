@@ -125,6 +125,7 @@ button:active {
   line-height: 1.55;
   overflow-wrap: anywhere;
   word-break: normal;
+  padding-left: 1em;
 }
 
 .answer-value.is-hidden {
