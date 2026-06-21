@@ -23,7 +23,7 @@
 
     <button>資料</button>
     <button onclick="toggleAnswer()">表示</button>
-    <button>前へ</button>
+    <button onclick="previousQuestion()">前へ</button>
     <button onclick="nextQuestion()">次へ</button>
   </section>
 
@@ -68,13 +68,18 @@
     }
 
     function nextQuestion() {
-      currentQuestionIndex++;
-
-      if (currentQuestionIndex >= questions.length) {
-        currentQuestionIndex = 0;
+      if (currentQuestionIndex < questions.length) {
+        currentQuestionIndex++;
       }
 
       isAnswerVisible = false;
+      renderQuestion();
+    }
+
+    function previousQuestion(){
+      if (currentQuestionIndex > 0){
+        currentQuestionIndex--;
+      }
       renderQuestion();
     }
 
