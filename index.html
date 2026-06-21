@@ -89,19 +89,19 @@
     function nextQuestion() {
       if (currentQuestionIndex < questions.length - 1) {
         currentQuestionIndex++;
-      }
-
-      isAnswerVisible = false;
-      renderQuestion();
+        isAnswerVisible = false;
+        renderQuestion();
+      }      
     }
 
     function previousQuestion() {
       if (currentQuestionIndex > 0) {
         currentQuestionIndex--;
+        isAnswerVisible = false;
+        renderQuestion();
       }
 
-      isAnswerVisible = false;
-      renderQuestion();
+      
     }
 
     function showPage(pageId) {
