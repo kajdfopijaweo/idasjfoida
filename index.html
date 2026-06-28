@@ -10,6 +10,7 @@
 
   <section id="p1">
     <h1>Anki!</h1>
+    <button id="randomButton" onclick="toggleRandomOrder()">ラ</button>
     <div id="categoryButtons"></div>
   </section>
 
@@ -27,27 +28,24 @@
     <button onclick="nextQuestion()">次へ</button>
   </section>
 
+  <script src="papaparse.min.js"></script>
   <script>
-    let categories = [];
+    let allQuestions = [];
     let questions = [];
     let currentQuestionIndex = 0;
     let isAnswerVisible = false;
+    let isRandomOrder = false;
 
-    async function loadCategories() {
-      const response = await fetch("category.json");
-      categories = await response.json();
-    }
-
-    async function loadQuestions(category) {
-      const filePath =
-        "data/" + encodeURIComponent(category) + ".json";
-
-      const response = await fetch(filePath);
-      questions = await response.json();
-    }
-    
     async function renderCategoryButtons() {
-      await loadCategories();
+      const text = await fetch("questions.csv").then(response => response.text());
+      allQuestions = Papa.parse(text, {
+        header: true,
+        skipEmptyLines: true
+      }).data.map(row => ({
+        ...row,
+        answerItems: JSON.parse(row.answerItems)
+      }));
+      const categories = [...new Set(allQuestions.map(row => row.category))];
 
       document.getElementById("categoryButtons").innerHTML =
         categories
@@ -58,8 +56,23 @@
           `)
           .join("");
     }
-    async function startCategory(category) {
-      await loadQuestions(category);
+
+    //問題をシャッフル
+    function shuffleQuestions() {
+      for (let i = questions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [questions[i], questions[j]] =
+          [questions[j], questions[i]];
+      }
+    }
+
+    //p1でカテゴリーのボタンが押されたとき、p2に遷移し問題を表示
+    function startCategory(category) {
+      questions = allQuestions.filter(row => row.category === category);
+
+      if (isRandomOrder){
+        shuffleQuestions();
+      }
 
       currentQuestionIndex = 0;
       isAnswerVisible = false;
@@ -70,32 +83,63 @@
       renderQuestion();
     }
 
+    //答えを文字形式にするか写真形式にするか判断する関数
+    function createAnswerContent(value) {
+      const isImage = value.includes(".jpg");
+
+      if (isImage) {
+        return `
+          <img
+            class="answer-image"
+            src="${value}"
+            alt="解答画像"
+          >
+        `;
+      }
+      return `<span class="answer-text">${value}</span>`;
+    }
+
+    //問題を表示する部分、currentQuestionIndexに対応する問題を整形して画面に表示
     function renderQuestion() {
       const question = questions[currentQuestionIndex];
       if (!question) return;
 
       document.getElementById("questionTitle").textContent = "Q" + (currentQuestionIndex+1)+ " " + question.questionTitle;
 
-      document.getElementById("questionImage").src =
-        question.image;
+      //写真があるなら表示、ないなら非表示
+      const imageElement = document.getElementById("questionImage");
+      if (question.image) {
+        imageElement.src = question.image;
+        imageElement.hidden = false;
+      } else {
+        imageElement.hidden = true;
+      }
 
       document.getElementById("answerLabels").innerHTML =
         question.answerItems
-          .map(item => `
-            <div class="answer-item">
-              <span class="answer-label">${item.label}：</span>
-              <span class="answer-value ${isAnswerVisible ? "" : "is-hidden"}">
-                ${item.value}
-              </span>
-            </div>
-          `)
-          .join("");
+      .map(item => {
+        const content = createAnswerContent(item.value);
+        const hiddenClass = isAnswerVisible ? "" : "is-hidden";
+
+        return `
+          <div class="answer-item">
+            <span class="answer-label">
+              ${item.label}：
+            </span>
+
+            <span class="answer-value ${hiddenClass}">
+              ${content}
+            </span>
+          </div>
+        `;
+      })
+      .join("");
 
       const toggleButton =
         document.getElementById("answerToggleButton");
 
       toggleButton.classList.toggle(
-        "is-visible",
+        "aria-pressed",
         isAnswerVisible
       );
     }
@@ -103,6 +147,14 @@
     function toggleAnswer() {
       isAnswerVisible = !isAnswerVisible;
       renderQuestion();
+    }
+
+    function toggleRandomOrder() {
+      isRandomOrder = !isRandomOrder;
+      randomButton.classList.toggle(
+        "aria-pressed",
+        isRandomOrder
+      );
     }
 
     function nextQuestion() {
