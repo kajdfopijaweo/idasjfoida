@@ -89,12 +89,17 @@ button:active {
   line-height: 1.35;
 }
 
-#questionImage {
+#questionImage,
+.answer-image {
   display: block;
   width: calc(100% - 16px);
   height: auto;
   margin: 8px;
   object-fit: contain;
+}
+
+#questionImage[hidden] {
+  display: none;
 }
 
 #answerLabels {
@@ -125,6 +130,9 @@ button:active {
   line-height: 1.55;
   overflow-wrap: anywhere;
   word-break: normal;
+}
+.answer-text {
+  display: block;
   padding-left: 1em;
 }
 
@@ -132,7 +140,8 @@ button:active {
   visibility: hidden;
 }
 
-#p2 > button {
+#p2 > button,
+#randomButton {
   position: fixed;
   bottom: 14px;
   z-index: 12;
@@ -165,8 +174,12 @@ button:active {
   left: calc(12px + (var(--footer-button-size) + 13px) * 4);
 }
 
-#p2 > button.is-visible,
-#p2 > button[aria-pressed="true"] {
+#randomButton {
+  left: calc(12px + (var(--footer-button-size) + 13px) * 2);
+}
+
+#answerToggleButton.aria-pressed,
+#randomButton.aria-pressed {
   background: #888;
   color: #fff;
 }
@@ -208,5 +221,9 @@ button:active {
 
   #p2 > button:nth-of-type(5) {
     left: calc(50% + 159px);
+  }
+
+  #randomButton {
+    left: calc(50% - 41px);
   }
 }
